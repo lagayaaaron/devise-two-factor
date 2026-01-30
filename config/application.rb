@@ -16,6 +16,10 @@ module DeviseTwoFactor
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     config.autoload_lib(ignore: %w[assets tasks])
 
+    config.active_record.encryption.primary_key = "08wDVjG0Yt0eCmeN4KCshXm2KbpL5NAL"
+    config.active_record.encryption.deterministic_key = "J214gZsAX3TALfMxy86sOWIsu2dkHsVd"
+    config.active_record.encryption.key_derivation_salt = "L5SOqQdWPZXAts7jta4M1wRJzRrTyDig"
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
