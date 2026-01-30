@@ -42,7 +42,7 @@ class User < ApplicationRecord
   end
 
   def enable_two_factor!
-    self.otp_secret ||= User.generate_otp_secret
+    self.otp_secret = User.generate_otp_secret unless otp_secret.present?
     self.otp_required_for_login = true
     save!
   end
@@ -51,7 +51,8 @@ class User < ApplicationRecord
     update!(
       otp_required_for_login: false,
       otp_secret: nil,
-      otp_backup_codes: nil
+      otp_backup_codes: nil,
+      backup_codes_digest: nil
     )
   end
 
@@ -64,8 +65,9 @@ class User < ApplicationRecord
   # Verify TOTP code from authenticator app
   def verify_totp_code(code)
     return false if otp_secret.blank?
+
     totp = ROTP::TOTP.new(otp_secret)
-    totp.verify(code, drift_behind: 30, drift_ahead: 30)
+    totp.verify(code, drift_behind: 30)
   end
 
   # Regenerate backup codes
@@ -156,15 +158,11 @@ class User < ApplicationRecord
 
     case code.length
     when 6
-      if otp_secret.present?
-        return true if respond_to?(:validate_and_consume_otp!) && validate_and_consume_otp!(code)
-        return true if verify_totp_code(code)
-      end
+      return verify_totp_code(code) if otp_secret.present?
 
-      return true if verify_email_otp(code)
-      false
+      verify_email_otp(code)
     when 8
-      true if verify_backup_code(code.downcase)
+      verify_backup_code(code.downcase)
     else
       false
     end

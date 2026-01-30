@@ -20,7 +20,7 @@ class Users::OtpChallengesController < ApplicationController
 
     otp_code = params[:otp_attempt]&.strip
 
-    if @user.verify_email_otp(otp_code)
+    if @user.verify_any_otp(otp_code)
       complete_sign_in(@user)
     else
       increment_failed_attempts

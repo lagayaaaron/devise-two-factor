@@ -18,57 +18,49 @@ html data-theme="light"
             h2 class="text-3xl font-bold mb-2"
               | Two-Factor Authentication
             p class="text-base-content/60"
-              | Signing in as
-              span class="font-semibold" = @user.email
-
+              | Signing in as 
+              span class="font-semibold"= @user.email
           div class="alert alert-info mb-6"
             svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"
               path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             div class="text-sm"
               p class="font-bold"
-                | Check your email
+                | Open your authenticator app
               p
-                | Enter the 6-digit code we sent to your inbox
-
+                | Enter the 6-digit code to complete sign in
           - if flash[:alert]
             div class="alert alert-error mb-4" data-controller="auto-dismiss"
               svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
                 path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-              span = flash[:alert]
-
+              span= flash[:alert]
           div data-controller="otp-challenge"
             = form_with url: users_otp_challenge_path, method: :post, local: true do |f|
               div class="form-control"
                 = f.label :otp_attempt, class: "label" do
                   span class="label-text font-semibold" data-otp-challenge-target="label"
-                    | Verification Code
-                = f.text_field :otp_attempt, autocomplete: "off", autofocus: true,
-                  maxlength: 6, placeholder: "000000", required: true,
-                  data: { otp_challenge_target: "input", action: "input->otp-challenge#formatInput keyup->otp-challenge#handleEnter" },
-                  class: "input input-bordered input-lg w-full text-center text-3xl tracking-[0.5em] font-mono"
-
+                    | Authentication Code
+                = f.text_field :otp_attempt, autocomplete: "off", autofocus: true, maxlength: 10, placeholder: "000000", required: true, data: { otp_challenge_target: "input", action: "input->otp-challenge#formatInput keyup->otp-challenge#handleEnter" }, class: "input input-bordered input-lg w-full text-center text-3xl tracking-[0.5em] font-mono"
+                label class="label"
+                  span class="label-text-alt" data-otp-challenge-target="hint"
+                    | The code refreshes every 30 seconds
               div class="form-control mt-6"
                 = f.submit "Verify", class: "btn btn-primary btn-lg w-full", data: { otp_challenge_target: "submitBtn" }
-
             div class="divider text-xs my-6"
               | NEED HELP?
             div class="text-center space-y-3"
               button type="button" class="link link-primary text-sm flex items-center justify-center gap-2" data-action="click->otp-challenge#toggleBackupCode"
                 svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                   path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-                | Use a backup code instead
+                | Use backup code instead
               = button_to cancel_users_otp_challenge_path, method: :post, class: "btn btn-ghost btn-sm w-full" do
                 svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                   path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"
                 | Cancel and return to login
-
-          - if session[:otp_remaining_time]
             div class="mt-6 text-center"
               p class="text-xs text-base-content/40"
                 | This session will expire in
-                span class="font-mono" data-controller="countdown" data-countdown-seconds-value=session[:otp_remaining_time]
-                  span data-countdown-target="display" = format_time(session[:otp_remaining_time])
-
+                span class="font-mono" data-controller="countdown" data-countdown-seconds-value=session_remaining_time
+                  span data-countdown-target="display"= format_time(session_remaining_time)
     div class="text-center py-4"
       p class="text-xs text-base-content/40"
         svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"

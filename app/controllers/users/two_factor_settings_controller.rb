@@ -11,15 +11,13 @@ class Users::TwoFactorSettingsController < ApplicationController
       return
     end
 
-    current_user.otp_secret ||= User.generate_otp_secret
-    current_user.save!
+    current_user.enable_two_factor!
 
     session[:otp_user_id] = current_user.id
     session[:otp_timestamp] = Time.current.to_i
     current_user.generate_and_send_email_otp!
 
-    @user = current_user
-    @qr_code = generate_qr_code(@user)
+    @qr_code = generate_qr_code(current_user)
     @backup_codes = nil
 
     render :edit
@@ -29,7 +27,7 @@ class Users::TwoFactorSettingsController < ApplicationController
     @user = current_user
     otp_code = params[:otp_code].to_s.strip
 
-    if @user.verify_email_otp(otp_code)
+    if @user.verify_any_otp(otp_code)
       @backup_codes = @user.regenerate_backup_codes!
       @user.enable_two_factor!
       @qr_code = generate_qr_code(@user)
@@ -70,10 +68,13 @@ class Users::TwoFactorSettingsController < ApplicationController
   private
 
   def generate_qr_code(user)
+    unless user.otp_secret.present?
+      user.update!(otp_secret: User.generate_otp_secret)
+    end
+
     label = "#{Rails.application.class.module_parent_name}:#{user.email}"
-    otp_secret = user.otp_secret
     RQRCode::QRCode.new(
-      ROTP::TOTP.new(otp_secret).provisioning_uri(label)
+      ROTP::TOTP.new(user.otp_secret).provisioning_uri(label)
     ).as_svg(
       offset: 0,
       color: "000",
