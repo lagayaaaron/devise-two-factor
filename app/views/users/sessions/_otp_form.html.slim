@@ -1,0 +1,39 @@
+div data-controller="otp-verification" data-otp-verification-cooldown-value=cooldown
+  div class="text-center mb-6"
+    div class="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4"
+      svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+    h3 class="text-2xl font-bold"
+      | Check your email
+    p class="text-base-content/60 mt-2"
+      | We sent a code to
+      span class="font-semibold"= email
+  div class="alert alert-info mb-4"
+    svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6"
+      path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+    span class="text-sm"
+      | Enter the 6-digit code from your email. Code expires in 5 minutes.
+  div id="otp_error"
+  = form_with url: verify_otp_users_sessions_path, method: :post, data: { turbo: true } do |f|
+    div class="form-control"
+      = f.label :otp_code, class: "label" do
+        span class="label-text font-semibold" data-otp-verification-target="label"
+          | Verification Code
+      = f.text_field :otp_code, autocomplete: "off", autofocus: true, placeholder: "000000", data: { otp_verification_target: "input", action: "input->otp-verification#formatInput keyup->otp-verification#handleEnter" }, class: "input input-bordered w-full text-center text-3xl tracking-[0.5em] font-mono"
+      label class="label"
+        span class="label-text-alt" data-otp-verification-target="hint"
+          | Enter the 6-digit code from your email
+    div class="form-control mt-6"
+      = f.submit "Verify Code", class: "btn btn-primary w-full", data: { otp_verification_target: "submitBtn" }
+  div id="otp_resend_section" class="mt-6"
+    = render "users/sessions/resend_button", cooldown: cooldown, message: nil
+  div class="divider text-xs"
+    | HAVING TROUBLE?
+  div class="text-center space-y-2"
+    button type="button" class="link link-primary text-sm" data-action="click->otp-verification#toggleBackupCode"
+      | Use backup code instead
+    div
+      = link_to new_user_session_path, class: "link link-neutral text-sm inline-flex items-center gap-1" do
+        svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"
+        | Back to login

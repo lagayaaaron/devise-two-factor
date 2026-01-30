@@ -1,0 +1,10 @@
+h2
+  | Your Login Code
+p
+  | Hello #{@user.email},
+p
+  | Your one-time login code is:
+h1 style="font-size: 32px; letter-spacing: 5px;"
+  = @otp_code
+p
+  | This code will expire in #{@expires_in} minutes.

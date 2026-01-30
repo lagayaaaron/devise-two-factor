@@ -4,5 +4,23 @@
 
 import { application } from "./application"
 
+import AutoDismissController from "./auto_dismiss_controller"
+application.register("auto-dismiss", AutoDismissController)
+
+import ClipboardController from "./clipboard_controller"
+application.register("clipboard", ClipboardController)
+
+import CountdownController from "./countdown_controller"
+application.register("countdown", CountdownController)
+
 import HelloController from "./hello_controller"
 application.register("hello", HelloController)
+
+import OtpChallengeController from "./otp_challenge_controller"
+application.register("otp-challenge", OtpChallengeController)
+
+import OtpInputController from "./otp_input_controller"
+application.register("otp-input", OtpInputController)
+
+import OtpVerificationController from "./otp_verification_controller"
+application.register("otp-verification", OtpVerificationController)

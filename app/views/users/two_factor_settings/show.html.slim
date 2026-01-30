@@ -1,0 +1,97 @@
+div class="container mx-auto max-w-4xl p-4"
+  div class="breadcrumbs text-sm mb-4"
+    ul
+      li
+        = link_to "Home", root_path
+      li
+        = link_to "Settings", "#"
+      li
+        | Two-Factor Authentication
+  div class="card bg-base-100 shadow-xl"
+    div class="card-body"
+      div class="flex items-start justify-between mb-6"
+        div
+          h2 class="card-title text-3xl mb-2"
+            | Two-Factor Authentication
+          p class="text-base-content/60"
+            | Add an extra layer of security to your account
+        - if current_user.two_factor_enabled?
+          div class="badge badge-success badge-lg gap-2"
+            svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            | Enabled
+        - else
+          div class="badge badge-warning badge-lg gap-2"
+            svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            | Disabled
+      div class="divider"
+      - if current_user.two_factor_enabled?
+        div class="alert alert-success mb-6"
+          svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
+            path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+          div
+            h3 class="font-bold"
+              | Your account is protected
+            div class="text-sm"
+              | Two-factor authentication has been enabled since
+              = current_user.two_factor_enabled_at&.strftime("%B %d, %Y at %I:%M %p")
+        div class="grid md:grid-cols-2 gap-4 mb-6"
+          div class="card bg-base-200"
+            div class="card-body"
+              h3 class="card-title text-lg"
+                svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                | How it works
+              p class="text-sm text-base-content/70"
+                | When you sign in, we'll send a verification code to your email. You'll need to enter this code to complete the login process.
+          div class="card bg-base-200"
+            div class="card-body"
+              h3 class="card-title text-lg"
+                svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+                | Backup codes
+              p class="text-sm text-base-content/70"
+                | Use backup codes to sign in if you don't have access to your email. Each code can only be used once.
+        div class="flex flex-wrap gap-3"
+          = button_to regenerate_codes_users_two_factor_settings_path, method: :post, class: "btn btn-primary gap-2" do
+            svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            | Regenerate Backup Codes
+          = button_to users_two_factor_settings_path, method: :delete, data: { turbo_confirm: "Are you sure you want to disable two-factor authentication? This will make your account less secure." }, class: "btn btn-error btn-outline gap-2" do
+            svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"
+            | Disable Two-Factor Authentication
+      - else
+        div class="alert alert-warning mb-6"
+          svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"
+            path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          div
+            h3 class="font-bold"
+              | Your account is not fully protected
+            div class="text-sm"
+              | Enable two-factor authentication to add an extra layer of security
+        div class="prose max-w-none mb-6"
+          h3
+            | Why enable two-factor authentication?
+          ul
+            li
+              strong
+                | Enhanced Security:
+              | Protects your account even if your password is compromised
+            li
+              strong
+                | Email Verification:
+              | Receive a code via email for each login attempt
+            li
+              strong
+                | Backup Codes:
+              | Get emergency access codes for account recovery
+            li
+              strong
+                | Peace of Mind:
+              | Know that your account is protected by multiple layers of security
+        = button_to users_two_factor_settings_path, method: :post, data: { turbo: false }, class: "btn btn-primary btn-lg gap-2" do
+          svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+          | Enable Two-Factor Authentication

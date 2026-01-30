@@ -4,8 +4,8 @@ source "https://rubygems.org"
 gem "rails", "~> 8.1.2"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
-# Use sqlite3 as the database for Active Record
-gem "sqlite3", ">= 2.1"
+# Use postgres as the database for Active Record
+gem "pg", "~> 1.6"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
@@ -59,6 +59,8 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  gem "letter_opener"
+  gem "letter_opener_web"
 end
 
 group :test do
@@ -67,7 +69,9 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "devise", "~> 5.0"
+gem "slim-rails"
+gem "devise", "~> 4.9"
 gem 'devise-two-factor'
 gem 'rqrcode' # For QR code generation
 gem 'rotp' # For TOTP generation
+gem 'bcrypt', '~> 3.1'

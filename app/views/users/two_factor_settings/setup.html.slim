@@ -1,0 +1,67 @@
+div class="container mx-auto max-w-2xl p-4"
+  div class="card bg-base-100 shadow-xl"
+    div class="card-body"
+      h2 class="card-title text-2xl"
+        | Set Up Two-Factor Authentication
+
+      div class="steps steps-vertical lg:steps-horizontal w-full my-6"
+        div class="step step-primary"
+          | Scan QR Code
+        div class="step #{'step-primary' if @backup_codes.present?}"
+          | Verify Code
+        div class="step"
+          | Save Backup Codes
+
+      - if @backup_codes.blank?
+        - if flash[:alert]
+          div class="alert alert-error mb-4"= flash[:alert]
+
+        div class="alert alert-info mb-4"
+          span
+            | Scan this QR code with your authenticator app
+
+        div class="flex justify-center my-6"
+          div class="bg-white p-4 rounded-lg"
+            == @qr_code.html_safe
+
+        div class="divider"
+          | VERIFY
+
+        = form_with url: users_two_factor_settings_path, method: :patch do |f|
+          div class="form-control"
+            = f.label :otp_code, class: "label" do
+              span class="label-text"
+                | Enter the 6-digit code from your app
+            = f.text_field :otp_code, autocomplete: "off", autofocus: true, maxlength: 6,
+              placeholder: "000000", class: "input input-bordered w-full text-center text-2xl tracking-widest font-mono"
+
+          div class="card-actions justify-end mt-6"
+            = link_to "Cancel", root_path, class: "btn btn-ghost"
+            = f.submit "Verify & Enable", class: "btn btn-primary"
+
+      - else
+        div class="alert alert-success mb-4"
+          span
+            | Two-factor authentication enabled successfully!
+
+        div class="alert alert-warning"
+          div
+            h3 class="font-bold"
+              | Save these backup codes!
+            p class="text-sm"
+              | You can use these codes to access your account if you lose your authenticator device.
+
+        div class="card bg-base-200 mt-4" data-controller="clipboard"
+          div class="card-body"
+            div class="flex justify-between items-center mb-2"
+              h3 class="font-bold"
+                | Backup Codes
+              button type="button" class="btn btn-sm btn-ghost" data-clipboard-target="button" data-action="click->clipboard#copy"
+                | Copy All
+
+            div class="grid grid-cols-2 gap-2 font-mono text-sm" data-clipboard-target="source"
+              - @backup_codes.each do |code|
+                div class="p-2 bg-base-100 rounded"= code
+
+          div class="card-actions justify-end mt-6"
+            = link_to "Done", root_path, class: "btn btn-primary"
