@@ -70,7 +70,7 @@ group :test do
 end
 
 gem "slim-rails"
-gem "devise", "~> 4.9"
+gem "devise", "~> 5.0"
 gem 'devise-two-factor'
 gem 'rqrcode' # For QR code generation
 gem 'rotp' # For TOTP generation
